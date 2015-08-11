@@ -1,0 +1,20 @@
+{
+  "name": "skillicious",
+  "version": "0.0.1",
+  "description": "An example React.js job recruiting app",
+  "scripts": {
+    "build": "browserify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js",
+    "watch": "watchify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js --debug --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluecollarcoder/skillicious-client"
+  },
+  "dependencies": {
+    "flux": "^2.0.3",
+    "jquery": "^2.1.4",
+    "jquery-ui": "^1.10.5",
+    "react": "^0.13.3",
+    "underscore": "^1.8.3"
+  }
+}
