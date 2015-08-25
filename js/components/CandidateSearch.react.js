@@ -29,33 +29,72 @@ var CandidateSearch = React.createClass({
       // The candidates being shown
       "candidates":this.props.candidateStore.candidates,
       // Is the list of candidates being updated
-      "isLoading":false
+      "isLoading":false,
+      "availableTags":[]
     };
   },
   "componentDidMount":function(){
     var self = this;
+
+    // Register listeners with the FilterTermsStore
+    this.props.filterTermsStore.on("initialize",function(){
+      if (self.props.filterTermsStore.terms)
+        _.each(self.props.filterTermsStore.terms.split(','),function(_term){
+          $txtTerms.tagit('createTag',_term);
+        });
+    });
+
     // Register listeners with the CandidateStore
-    this.props.candidateStore.on("update",function(){
+    this.props.candidateStore.on("filter",function(){
+      // Filter the candidates based on filter terms
       self.setState({
-        "candidates": self.props.candidateStore.candidates,
-        "isLoading":false
+        "candidates": self.props.candidateStore.candidates
       });
     }).on("loading",function(){
+      // Show the loading placeholder
       self.setState({
         "isLoading":true
       });
+    }).on("update",function(){
+      // Update the list and reset filter tags
+      var skills = _.flatten(
+        _.map(self.props.candidateStore.candidates,function(candidate){
+          return Object.keys(candidate.getSkills());
+        })
+      );
+      self.setState({
+        "candidates": self.props.candidateStore.candidates,
+        "isLoading":false,
+        "availableTags":skills
+      });
     });
+
     // Initialize jQuery UI Tag-it plugin
-    $(this.refs.txtFilter.getDOMNode()).tagit({
+    var $txtTerms = $(this.refs.txtFilter.getDOMNode()).tagit({
       "fieldName":"skills",
       "allowSpaces":true,
-      "availableTags":["nodejs", "java", "sql", "javascript", "ruby", "python", "c"]
+      "autocomplete":{
+        "source":function(search, showChoices) {
+          var filter = search.term.toLowerCase();
+          var choices = $.grep(self.state.availableTags, function(element) {
+            // Only match autocomplete options that begin with the search term.
+            // (Case insensitive.)
+            return (element.toLowerCase().indexOf(filter) === 0);
+          });
+          if (!this.options.allowDuplicates) {
+            choices = this._subtractArray(choices, this.assignedTags());
+          }
+          showChoices(choices);
+        }
+      }
     });
+
     $(this.refs.btnFilter.getDOMNode()).button();
   },
   "componentWillUnmount":function(){
     // Unregister all listeners from the CandidateStore
-    this.props.candidateStore.removeAllListeners("update").removeAllListeners("loading");
+    this.props.candidateStore.removeAllListeners("filter").removeAllListeners("update").removeAllListeners("loading");
+    this.props.filterTermsStore.removeAllListeners("initialize");
   },
   "handleClick":function(){
     var filterTerms = this.refs.txtFilter.getDOMNode().value;
