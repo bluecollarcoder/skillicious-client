@@ -13,7 +13,7 @@ require('../../lib/tag-it/tag-it.js');
 /*
  * Load React components
  */
-var CandidateStore = require('../stores/CandidateStore.react');
+var ActionCreator = require('../actions/CandidateSearchActions.react');
 
 /*
  * Define React components
@@ -36,21 +36,38 @@ var CandidateSearch = React.createClass({
   "componentDidMount":function(){
     var self = this;
 
-    // Register listeners with the FilterTermsStore
-    this.props.filterTermsStore.on("initialize",function(){
-      if (self.props.filterTermsStore.terms)
-        _.each(self.props.filterTermsStore.terms.split(','),function(_term){
+    var filterCandidates = function(candidates,filterTerms){
+      return candidates.filter(function(candidate){
+        return _.keys(candidate.getSkills()).some(function(skill){
+          if (!filterTerms.length)
+            return true;
+          else {
+            return _.contains(
+              filterTerms.split(/\s*,\s*/).map(function(val){
+                return val.toUpperCase();
+              }),
+              skill.toUpperCase()
+            );
+          }
+        });
+      });
+    };
+
+    // Register listeners with the FilterSettingsStore
+    this.props.filterSettingsStore.on("initialize",function(){
+      if (self.props.filterSettingsStore.terms)
+        _.each(self.props.filterSettingsStore.terms.split(','),function(_term){
           $txtTerms.tagit('createTag',_term);
         });
+    }).on("filter",function(){
+      var filtered = filterCandidates(self.props.candidateStore.candidates,self.props.filterSettingsStore.terms);
+      self.setState({
+        "candidates": filtered
+      });
     });
 
     // Register listeners with the CandidateStore
-    this.props.candidateStore.on("filter",function(){
-      // Filter the candidates based on filter terms
-      self.setState({
-        "candidates": self.props.candidateStore.candidates
-      });
-    }).on("loading",function(){
+    this.props.candidateStore.on("loading",function(){
       // Show the loading placeholder
       self.setState({
         "isLoading":true
@@ -62,8 +79,9 @@ var CandidateSearch = React.createClass({
           return Object.keys(candidate.getSkills());
         })
       );
+      var filtered = filterCandidates(self.props.candidateStore.candidates,self.props.filterSettingsStore.terms);
       self.setState({
-        "candidates": self.props.candidateStore.candidates,
+        "candidates": filtered,
         "isLoading":false,
         "availableTags":skills
       });
@@ -93,16 +111,13 @@ var CandidateSearch = React.createClass({
   },
   "componentWillUnmount":function(){
     // Unregister all listeners from the CandidateStore
-    this.props.candidateStore.removeAllListeners("filter").removeAllListeners("update").removeAllListeners("loading");
-    this.props.filterTermsStore.removeAllListeners("initialize");
+    this.props.candidateStore.removeAllListeners("update").removeAllListeners("loading");
+    this.props.filterSettingsStore.removeAllListeners("initialize").removeAllListeners("filter");
   },
   "handleClick":function(){
     var filterTerms = this.refs.txtFilter.getDOMNode().value;
     // Dispatch the filter event with the dispatcher
-    this.props.dispatcher.dispatch({
-      "actionType":"filter",
-      "filterTerms":filterTerms
-    });
+    ActionCreator.filter(filterTerms);
   },
   "render":function(){
     var results = (this.state.isLoading) ?

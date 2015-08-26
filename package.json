@@ -4,7 +4,8 @@
   "description": "An example React.js job recruiting app",
   "scripts": {
     "build": "browserify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js",
-    "watch": "watchify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js --debug --verbose"
+    "watch": "watchify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js --debug --verbose",
+    "test": "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,12 @@
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
     "react": "^0.13.3",
+    "rsvp": "^3.0.21",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "jsdom": "^3.1.2",
+    "sinon": "^1.16.1"
   }
 }
