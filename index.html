@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap-theme.min.css" />
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <style>
+    body {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+    .logo {
+      font-family: 'Lobster', cursive;
+      font-size: 28pt;
+      color: #FFF !important;
+    }
+    .banner {
+      background-image: url("static/img/office_background_1079x487.jpg");
+      background-repeat: no-repeat;
+      background-position: right top;
+      background-color: #FFF;
+    }
+    .jumbotron {
+      background-color: rgba(204,204,204,0.6);
+    }
+    .jumbotron h1 {
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    .jumbotron p {
+      margin-top: 30px;
+      color: #666;
+    }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="#">Skillicious</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <!-- <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form> -->
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id="signin" href="#">Sign In</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="banner">
+      <div class="jumbotron">
+        <div class="container text-center">
+          <h1>Let Your Next Job Come To You!</h1>
+          <p>Finding your dream job should be easy. Create your profile today and let companies compete for your talent.</p>
+          <p><a class="btn btn-primary btn-lg btn-success" href="#" role="button">Get Started Now!</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row text-center">
+        <h1>How It Works</h1>
+      </div>
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Sign Up</h3>
+          <p>Sign up for a free account and fill out your profile. </p>
+        </div>
+        <div class="col-md-4">
+          <h3>Jobs Come To You</h3>
+          <p>Companies compete for you, reaching out with salary, position, and equity upfront. </p>
+       </div>
+        <div class="col-md-4">
+          <h3>Apply</h3>
+          <p>Choose the companies you like and set up interviews with the decision maker.</p>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer class="text-center">
+        <p>&copy; Skillicious 2015</p>
+      </footer>
+    </div> <!-- /container -->
+
+  </body>
+  <script type="text/javascript" src="static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="static/index.js"></script>
+</html>
