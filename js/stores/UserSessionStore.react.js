@@ -17,23 +17,23 @@ function UserSessionStore(){
             this.principal = principal;
             this.token = token;
           }
-          EventEmitter.prototype.emit.call(this,type);
+          EventEmitter.prototype.emit.call(this,"change");
           break;
         case 'signin_success':
           if (arguments.length > 1 && action.principal != null && action.token != null) {
             window.sessionStorage.setItem("skillicious.session.principal",JSON.stringify(this.principal=action.principal));
             window.sessionStorage.setItem("skillicious.session.token",this.token=action.token);
-            EventEmitter.prototype.emit.call(this,type);
+            EventEmitter.prototype.emit.call(this,"change");
           }
           break;
         case 'signin_failure':
-        case 'signout':
+        case 'signout_success':
         case 'expire':
           this.principal = null;
           this.token = null;
           window.sessionStorage.removeItem("skillicious.session.principal");
           window.sessionStorage.removeItem("skillicious.session.token");
-          EventEmitter.prototype.emit.call(this,type);
+          EventEmitter.prototype.emit.call(this,"change");
           break;
         // Unrecognized action; ignore
       }

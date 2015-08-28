@@ -43,7 +43,7 @@ describe("User Session Store Tests",function(){
     this.stub.withArgs("skillicious.session.principal").returns(JSON.stringify(expected.principal));
     this.stub.withArgs("skillicious.session.token").returns(expected.token);
 
-    this.store.on("initialize",function(){
+    this.store.on("change",function(){
       Assert.ok(self.stub.calledTwice);
       Assert.deepEqual(self.store.principal,expected.principal);
       Assert.equal(self.store.token,expected.token);
@@ -56,10 +56,8 @@ describe("User Session Store Tests",function(){
     var self = this;
     this.stub.withArgs("skillicious.session.token").returns(null);
 
-    this.store.on("initialize",function(){
-      console.log("Inside event handler");
+    this.store.on("change",function(){
       Assert.ok(self.stub.calledTwice);
-      console.log("Checked calledTwice");
       Assert.isNull(self.store.principal);
       Assert.isNull(self.store.token);
       done();
@@ -77,7 +75,7 @@ describe("User Session Store Tests",function(){
       "token":"ABCDEFGHI"
     };
 
-    this.store.on("signin_success",function(){
+    this.store.on("change",function(){
       Assert.ok(self.setItemSpy.calledTwice);
       Assert.equal(self.setItemSpy.getCall(0).args[0],"skillicious.session.principal");
       Assert.equal(self.setItemSpy.getCall(0).args[1],JSON.stringify(expected.principal));
@@ -97,7 +95,7 @@ describe("User Session Store Tests",function(){
   it("should clear session on signout",function(done){
     var self = this;
 
-    this.store.on("signout",function(){
+    this.store.on("change",function(){
       Assert.ok(self.removeItemSpy.calledTwice);
       Assert.equal(self.removeItemSpy.getCall(0).args[0],"skillicious.session.principal");
       Assert.equal(self.removeItemSpy.getCall(1).args[0],"skillicious.session.token");
@@ -105,8 +103,8 @@ describe("User Session Store Tests",function(){
       Assert.isNull(self.store.token);
       done();
     });
-    this.store.emit("signout",{
-      "actionType":"signout"
+    this.store.emit("signout_success",{
+      "actionType":"signout_success"
     });
   });
 });
