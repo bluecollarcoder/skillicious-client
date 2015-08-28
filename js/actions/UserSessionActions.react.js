@@ -37,5 +37,11 @@ module.exports = {
         reject(error);
       });
     });
+  },
+  "registerUser":function(name,email,password){
+    debugger;
+  },
+  "registerEmployer":function(company,location,name,email,password){
+    debugger;
   }
 };

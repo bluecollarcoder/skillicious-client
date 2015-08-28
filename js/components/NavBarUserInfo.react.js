@@ -11,7 +11,7 @@ var UserSessionActionCreator = require('../actions/UserSessionActions.react');
 var NavBarAvator = React.createClass({
   "render":function(){
     return (
-      <li id="navbar-avator" className="dropdown">
+      <li id="navbar-avator" className="dropdown navbar-nav-button">
         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{this.props.principal.name} <span className="caret"></span></a>
         <ul className="dropdown-menu">
           <li><a href="#">Action</a></li>
@@ -85,7 +85,7 @@ var NavBarSignIn = React.createClass({
   },
   "render":function(){
     return (
-      <li id="navbar-signin"><a id="signin" href="#" onClick={this._showSignInForm}>Sign In</a></li>
+      <li id="navbar-signin" className="navbar-nav-button"><a id="signin" href="#" onClick={this._showSignInForm}>Sign In</a></li>
     );
   },
   "_showSignInForm":function(){
@@ -103,6 +103,7 @@ module.exports = React.createClass({
   "componentDidMount":function(){
     var self = this;
     this.props.userSessionStore.on("change",function(){
+      // debugger;
       self.setState({
         "principal":self.props.userSessionStore.principal,
         "token":self.props.userSessionStore.token
@@ -110,14 +111,22 @@ module.exports = React.createClass({
     });
   },
   "render":function(){
-    var userInfo = (this.state.principal) ?
-      (<NavBarAvator principal={this.state.principal} token={this.state.token} />) :
-      (<NavBarSignIn />);
-    return (
-      <ul className="nav navbar-nav navbar-right">
-        {this.props.children}
-        {userInfo}
-      </ul>
-    );
+    // debugger;
+    if (this.state.principal) {
+      return (
+        <ul className="nav navbar-nav navbar-right">
+          {this.props.children}
+          <NavBarAvator principal={this.state.principal} token={this.state.token} />
+        </ul>
+      );
+    } else {
+      return (
+        <ul className="nav navbar-nav navbar-right">
+          {this.props.children}
+          <NavBarSignIn />
+          <li className="navbar-nav-button"><a id="register" href="register.html">Register</a></li>
+        </ul>
+      );
+    }
   }
 });

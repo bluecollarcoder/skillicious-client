@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/skillicious.main.css" />
+    <style>
+    body {
+      background-color: #F0F0F0;
+    }
+    .nav-tabs-container {
+      margin-top: 60px;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .nav-tabs {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    .nav-tabs > li {
+      width: 50%;
+      text-align: center;
+    }
+    .nav-tabs > li > a {
+      background: #DADADA;
+      color: #888;
+      border-radius: 2px;
+    }
+    .nav-tabs > li > a:hover {
+      background: #C0C0C0;
+    }
+    .tab-pane {
+      border: solid 1px #DDD;
+      border-radius: 2px;
+      text-align: center;
+      background-color: #FFF;
+    }
+    .form-header {
+      padding: 30px 80px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .form-body {
+      padding: 30px 80px;
+      text-align: left;
+    }
+    .form-body .row {
+      margin-bottom: 20px;
+    }
+    .form-body .row label {
+      margin-top: 7px;
+    }
+    .form-body .row input {
+      width: 100%;
+      border: solid 1px #AAA;
+      border-radius: 2px;
+      padding: 5px;
+    }
+    .form-footer {
+      padding: 30px 80px;
+      border-top: 1px solid #e5e5e5;
+      text-align: right;
+    }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="/">Skillicious</a>
+        </div>
+        <div id="navbar-container" id="navbar" class="navbar-collapse collapse">
+          <!-- user info React component -->
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <div id="registration-form-container" class="container">
+
+      <!-- Filled in by RegistrationForm.react -->
+
+    </div> <!-- /container -->
+
+    <footer class="text-center">
+      <p>&copy; Skillicious 2015</p>
+    </footer>
+
+  </body>
+  <script type="text/javascript" src="static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="static/index.js"></script>
+  <script type="text/javascript">
+    skillicious.initializeRegistrationForm();
+  </script>
+</html>

@@ -35,6 +35,10 @@ function UserSessionStore(){
           window.sessionStorage.removeItem("skillicious.session.token");
           EventEmitter.prototype.emit.call(this,"change");
           break;
+        case 'registration_success':
+          break;
+        case 'registration_failure':
+          break;
         // Unrecognized action; ignore
       }
     }
