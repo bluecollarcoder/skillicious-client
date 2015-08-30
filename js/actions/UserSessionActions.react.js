@@ -39,9 +39,33 @@ module.exports = {
     });
   },
   "registerUser":function(name,email,password){
-    debugger;
+    return new Promise(function(resolve,reject){
+      UserSessionApi.registerUser(name,email,password).then(function(result){
+        var action = _.extend({
+          "actionType":"registration_success"
+        }, result);
+        dispatcher.dispatch(action);
+        resolve(result);
+      }).catch(function(error){
+        var action = _.extend({"actionType":"registration_failure"},error);
+        dispatcher.dispatch(action);
+        reject(error);
+      });
+    });
   },
   "registerEmployer":function(company,location,name,email,password){
-    debugger;
+    return new Promise(function(resolve,reject){
+      UserSessionApi.registerEmployer(company,location,name,email,password).then(function(result){
+        var action = _.extend({
+          "actionType":"registration_success"
+        }, result);
+        dispatcher.dispatch(action);
+        resolve(result);
+      }).catch(function(error){
+        var action = _.extend({"actionType":"registration_failure"},error);
+        dispatcher.dispatch(action);
+        reject(error);
+      });
+    });
   }
 };

@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "An example React.js job recruiting app",
   "scripts": {
-    "build": "browserify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js",
-    "watch": "watchify -t /usr/local/lib/node_modules/reactify main.js -o static/bundle.js --debug --verbose & watchify -t /usr/local/lib/node_modules/reactify index.js -o static/index.js --debug --verbose",
+    "build": "browserify -t /usr/local/lib/node_modules/reactify test.js -o static/test.js",
+    "watch": "watchify -t /usr/local/lib/node_modules/reactify test.js -o static/test.js --debug --verbose & watchify -t /usr/local/lib/node_modules/reactify index.js -o static/index.js --debug --verbose",
     "test": "mocha --recursive"
   },
   "repository": {
@@ -16,6 +16,7 @@
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
     "react": "^0.13.3",
+    "react-router": "^0.13.3",
     "rsvp": "^3.0.21",
     "underscore": "^1.8.3"
   },

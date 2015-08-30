@@ -5,30 +5,26 @@ var React = require("react");
 var Dispatcher = require("flux").Dispatcher;
 
 /*
- * Load React components
+ * Global initialization
  */
+
+// Load navbar React components
 var UserSessionStore = require("./js/stores/UserSessionStore.react");
 var UserSessionActionCreator = require('./js/actions/UserSessionActions.react');
 var NavBarUserInfo = require('./js/components/NavBarUserInfo.react');
-var RegistrationForm = require('./js/components/RegistrationForm.react');
 
-/*
- * Instantiate dispatcher and stores
- */
+// Initialize navbar dispatcher and session store
 var dispatcher = new Dispatcher();
 var userSessionStore = new UserSessionStore();
-
-/*
- * Set up singleton action creator
- */
-UserSessionActionCreator.setUp(dispatcher);
-
-/*
- * Register dispatcher listeners
- */
-dispatcher.register(function(action){
-  userSessionStore.emit(action.actionType,action);
+var sessionStoreRegistration = dispatcher.register(function(action){
+ userSessionStore.emit(action.actionType,action);
 });
+
+// Set up session API
+require('./js/apis/UserSessionApi').setUp(userSessionStore);
+
+// Set up session action creator
+UserSessionActionCreator.setUp(dispatcher);
 
 /*
  * Initialize the top navbar
@@ -37,9 +33,48 @@ React.render(<NavBarUserInfo userSessionStore={userSessionStore}><li className="
 UserSessionActionCreator.initialize();
 
 /*
- * Page-specific initialization functions
+ * Global functions
  */
 window.skillicious = window.skillicious || {};
-window.skillicious.initializeRegistrationForm = function(){
-  React.render(<RegistrationForm />, $("#registration-form-container")[0]);
+window.skillicious.redirectToSignin = function(){
+  window.location.href = '/';
+};
+
+/*
+ * Page-specific initialization functions
+ */
+
+// Registration page
+window.skillicious.initializeRegistrationForm = function(domElement){
+  var RegistrationForm = require('./js/components/RegistrationForm.react');
+  React.render(<RegistrationForm />, domElement);
+};
+
+// User profile page
+var Router = require('react-router');
+window.skillicious.initializeProfile = function(domElement){
+  // Set up action creator
+  var UserProfileActionCreator = require('./js/actions/UserProfileActions.react');
+  UserProfileActionCreator.setUp(dispatcher);
+  // Set up store
+  var UserProfileStore = require('./js/stores/UserProfileStore.react');
+  var userProfileStore = new UserProfileStore();
+  // Register store with the dispatcher
+  dispatcher.register(function(action){
+    dispatcher.waitFor([sessionStoreRegistration]);
+    userProfileStore.emit(action.actionType,action);
+  });
+  // Set up profile API
+  require('./js/apis/UserProfileApi').setUp(userSessionStore);
+
+  var UserProfile = require('./js/components/UserProfile.react');
+  UserProfile.setUserProfileStore(userProfileStore);
+  UserProfile.setUserSessionStore(userSessionStore);
+
+  UserProfileActionCreator.initialize().catch(function(error){
+    alert("Error loading profile");
+  });
+  Router.run(UserProfile.createRoutes(), Router.HashLocation, function(Root){
+    React.render(<Root />, domElement);
+  });
 };

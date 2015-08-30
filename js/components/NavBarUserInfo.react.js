@@ -63,6 +63,7 @@ var SignInForm = React.createClass({
     );
   },
   "_doSignIn":function(e){
+    e.preventDefault();
     var email = this.refs.inputEmail.getDOMNode().value;
     var password = this.refs.inputPassword.getDOMNode().value;
     if (!email || !password)
@@ -124,7 +125,7 @@ module.exports = React.createClass({
         <ul className="nav navbar-nav navbar-right">
           {this.props.children}
           <NavBarSignIn />
-          <li className="navbar-nav-button"><a id="register" href="register.html">Register</a></li>
+          <li className="navbar-nav-button"><a id="register" href="register">Register</a></li>
         </ul>
       );
     }

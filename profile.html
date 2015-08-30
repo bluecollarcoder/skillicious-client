@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/skillicious.main.css" />
+    <style>
+      .profile-container h2 {
+        margin-top: 0;
+      }
+      .profile-section {
+        padding: 2.8em 0;
+        border-bottom: solid 1px #DDD;
+      }
+      .profile-section:last-child {
+        border: 0;
+      }
+      .profile-section h3 {
+        margin-top: 0;
+        margin-bottom: 1.6em;
+      }
+      .tag {
+        display: inline-block;
+        padding: 5px 10px;
+        text-align: center;
+        color: #FFF;
+        border-radius: 0.2em;
+        margin-right: 0.2em;
+      }
+      .skill-working {
+        background-color: #999;
+      }
+      .skill-advanced {
+        background-color: #555;
+      }
+      .skill-expert {
+        background-color: #000;
+      }
+      .preformatted {
+        white-space: pre-wrap;
+      }
+      .work-position {
+        margin-top: 40px;
+        margin-bottom: 10px;
+      }
+      .position-employer {
+        font-size: 1.1em;
+        font-weight: 600;
+      }
+      .position-employer, .position-title, .position-duration {
+        line-height: 1.5em;
+      }
+      .position-description {
+        margin-top: 10px;
+      }
+      .profile-info-box {
+        border: solid 1px #DDD;
+        padding: 10px 20px;
+        border-radius: 2px;
+      }
+      .profile-completion .profile-completion-percent {
+        color: #5cb85c;
+        font-weight: 600;
+      }
+      .profile-completion .progress {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        height: 10px;
+        border-radius: 3px;
+      }
+      .profile-completion .btn-profile-update {
+        margin-top: 8px;
+        display: inline-block;
+      }
+      .profile-photo {
+        width: 100%;
+      }
+      .profile-photo img {
+        max-width: 100%;
+      }
+      .profile-edit-input {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="#">Skillicious</a>
+        </div>
+        <div id="navbar-container" id="navbar" class="navbar-collapse collapse">
+          <!-- user info React component -->
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <div class="container content-container" id="profile-container">
+
+    </div> <!-- /container -->
+
+    <footer class="text-center">
+      <p>&copy; Skillicious 2015</p>
+    </footer>
+
+  </body>
+  <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/index.js"></script>
+  <script type="text/javascript">
+    window.skillicious.initializeProfile($("#profile-container")[0]);
+  </script>
+</html>

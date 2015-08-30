@@ -24,6 +24,15 @@ function UserSessionStore(){
             window.sessionStorage.setItem("skillicious.session.principal",JSON.stringify(this.principal=action.principal));
             window.sessionStorage.setItem("skillicious.session.token",this.token=action.token);
             EventEmitter.prototype.emit.call(this,"change");
+            // Redirect based on the user's role
+            switch (this.principal.role) {
+              case "candidate":
+                window.location.href = "/profile";
+                break;
+              case "recruiter":
+                window.location.href = "/profile";
+                break;
+            }
           }
           break;
         case 'signin_failure':
@@ -36,6 +45,20 @@ function UserSessionStore(){
           EventEmitter.prototype.emit.call(this,"change");
           break;
         case 'registration_success':
+          if (arguments.length > 1 && action.principal != null && action.token != null) {
+            window.sessionStorage.setItem("skillicious.session.principal",JSON.stringify(this.principal=action.principal));
+            window.sessionStorage.setItem("skillicious.session.token",this.token=action.token);
+            EventEmitter.prototype.emit.call(this,"change");
+            // Redirect based on the user's role
+            switch (this.principal.role) {
+              case "candidate":
+                window.location.href = "/profile";
+                break;
+              case "recruiter":
+                window.location.href = "/profile";
+                break;
+            }
+          }
           break;
         case 'registration_failure':
           break;
