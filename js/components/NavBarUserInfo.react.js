@@ -14,9 +14,9 @@ var NavBarAvator = React.createClass({
       <li id="navbar-avator" className="dropdown navbar-nav-button">
         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{this.props.principal.name} <span className="caret"></span></a>
         <ul className="dropdown-menu">
-          <li><a href="#">Action</a></li>
-          <li><a href="#">Another action</a></li>
-          <li><a href="#">Something else here</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="#">Account</a></li>
+          <li><a href="#">Settings</a></li>
           <li role="separator" className="divider"></li>
           <li><a href="#" onClick={this._doSignOut}>Sign Out</a></li>
         </ul>
@@ -29,6 +29,9 @@ var NavBarAvator = React.createClass({
 });
 
 var SignInForm = React.createClass({
+  "getInitialState":function(){
+    return {};
+  },
   "componentDidMount":function(){
     $('<link rel="stylesheet" type="text/css" href="/static/css/skillicious-signin-form.css" />').appendTo("head");
   },
@@ -116,7 +119,6 @@ module.exports = React.createClass({
     if (this.state.principal) {
       return (
         <ul className="nav navbar-nav navbar-right">
-          {this.props.children}
           <NavBarAvator principal={this.state.principal} token={this.state.token} />
         </ul>
       );

@@ -7,22 +7,26 @@ var temp = 0;
 module.exports = {
   "setUp":function(_sessionStore,_root){
     sessionStore = _sessionStore;
-    API_ROOT = _root;
+    API_ROOT = _root ? _root : API_ROOT;
   },
   "signIn":function(email,password){
     return new RSVP.Promise(function(resolve,reject){
-      window.setTimeout(function(){
-        var results = {
-          "principal":{
-            "id":1,
-            "email":"waynebeast@gmail.com",
-            "name":"Wayne Beast",
-            "role":"candidate"
-          },
-          "token":"ABCDEFGHI"
-        };
-        resolve(results);
-      },2000);
+      $.ajax(API_ROOT+'/auth',{
+        "type":"GET",
+        "headers":{
+          "Authorization":"Basic " + new Buffer(email + ':' + password).toString('base64')
+        },
+        "success":function(principal,status,jqXHR){
+          var results = {
+            "principal":principal,
+            "token":jqXHR.getResponseHeader('X-Jwt-Token')
+          };
+          resolve(results);
+        },
+        "error":function(jqXHR,status,error){
+          reject(new Error(error));
+        }
+      });
     });
   },
   "signOut":function(token){

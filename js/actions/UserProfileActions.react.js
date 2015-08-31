@@ -24,12 +24,16 @@ module.exports = {
   },
   "updateProfile":function(profile){
     return new Promise(function(resolve,reject){
-      var action = {
-        "actionType":"update_success",
-        "profile":profile
-      };
-      dispatcher.dispatch(action);
-      resolve(profile);
+      UserProfileApi.updateProfile(profile).then(function(result){
+        var action = {
+          "actionType":"update_success",
+          "profile":profile
+        };
+        dispatcher.dispatch(action);
+        resolve(profile);
+      }).catch(function(error){
+        reject(error);
+      });
     });
   }
 };

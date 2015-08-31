@@ -36,6 +36,9 @@ function UserSessionStore(){
           }
           break;
         case 'signin_failure':
+          EventEmitter.prototype.emit.call(this,"signin_failure");
+          alert("Sign In Failed");
+          break;
         case 'signout_success':
         case 'expire':
           this.principal = null;
