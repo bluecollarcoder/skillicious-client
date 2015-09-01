@@ -109,9 +109,7 @@ var ProfileView = React.createClass({
     );
   }
 });
-// <div className="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-//   <span className="sr-only"> Profile {completion*100}% complete</span>
-// </div>
+
 var ProfileEdit = React.createClass({
   "render":function(){
     if (!this.props.profile)
@@ -195,17 +193,15 @@ var UserProfile = React.createClass({
     var self = this;
     // Listen to "change" event on the UserProfileStore
     userProfileStore.on("change",function(opt){
-      if (!userProfileStore.profile)
-        // If the user does not have a profile object, take her to the edit screen
+      self.setState({
+        "profile":userProfileStore.profile ? userProfileStore.profile : {}
+      });
+      if (_.isEmpty(self.state.profile))
+        // If the user has an empty profile object, take her to the edit screen
         self.transitionTo('edit');
-      else {
-        // Otherwise, set the profile object and proceed to view screen
-        self.setState({
-          "profile":userProfileStore.profile
-        });
-        if (opt && opt.mode)
-          self.transitionTo(opt.mode);
-      }
+      else if (opt && opt.mode)
+        // If the event has an option for mode, go to that mode
+        self.transitionTo(opt.mode);
     });
     // Listen to "change" event on the UserSessionStore
     userSessionStore.on("change",function(){
@@ -213,9 +209,10 @@ var UserProfile = React.createClass({
       // If user not signed in, redirect to sign-in page
       if (!principal)
         window.skillicious.redirectToSignin();
-      self.setState({
-        "principal":principal
-      });
+      else
+        self.setState({
+          "principal":principal
+        });
     });
   },
   "render":function(){

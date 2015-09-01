@@ -37,7 +37,9 @@ UserSessionActionCreator.initialize();
  */
 window.skillicious = window.skillicious || {};
 window.skillicious.redirectToSignin = function(){
-  window.location.href = '/';
+  setTimeout(function(){
+    window.location.assign("/");
+  },200);
 };
 
 /*

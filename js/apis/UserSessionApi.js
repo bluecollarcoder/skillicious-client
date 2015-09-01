@@ -9,6 +9,14 @@ module.exports = {
     sessionStore = _sessionStore;
     API_ROOT = _root ? _root : API_ROOT;
   },
+  /**
+   * Uses the email and password passed in to authenticate the user with the
+   * server.
+   * @param {string} email User's email.
+   * @param {string} password User's password.
+   * @returns {Promise} A promise object that resolves if the sign in attempt is
+   *  successful.
+   */
   "signIn":function(email,password){
     return new RSVP.Promise(function(resolve,reject){
       $.ajax(API_ROOT+'/auth',{
@@ -29,27 +37,40 @@ module.exports = {
       });
     });
   },
+  /**
+   * Invalidates the JWT token on the server. For now, this function doesn't
+   * actually do anything.
+   * @param {string} token The JWT token to invalidate.
+   * @returns {Promise} A promise object that always resolves.
+   */
   "signOut":function(token){
     return new RSVP.Promise(function(resolve,reject){
-      window.setTimeout(function(){
-        resolve();
-      },2000);
+      resolve();
     });
   },
   "registerUser":function(name,email,password){
     return new RSVP.Promise(function(resolve,reject){
-      window.setTimeout(function(){
-        var results = {
-          "principal":{
-            "id":1,
-            "email":"waynebeast@gmail.com",
-            "name":"Wayne Beast",
-            "role":"candidate"
-          },
-          "token":"ABCDEFGHI"
-        };
-        resolve(results);
-      },2000);
+      $.ajax(API_ROOT+'/auth',{
+        "type":"POST",
+        "contentType":"application/json",
+        "processData":false,
+        "data":JSON.stringify({
+          "name":name,
+          "email":email,
+          "password":password,
+          "role":"candidate"
+        }),
+        "success":function(principal,status,jqXHR){
+          var results = {
+            "principal":principal,
+            "token":jqXHR.getResponseHeader('X-Jwt-Token')
+          };
+          resolve(results);
+        },
+        "error":function(jqXHR,status,error){
+          reject(new Error(error));
+        }
+      });
     });
   },
   "registerEmployer":function(company,location,name,email,password){
