@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/skillicious.main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <style>
       .profile-container h2 {
         margin-top: 0;
@@ -83,6 +84,33 @@
       }
       div.profile-edit-input {
         min-height: 12em;
+      }
+      .btn-work-history {
+        float: right;
+        cursor: pointer;
+        margin: 5px;
+      }
+      .btn-cancel {
+        padding: 20px;
+        cursor: pointer;
+        display: inline-block;
+      }
+      .add, .edit {
+        border: solid 1px #AAA;
+        background-color: #F0F0F0;
+        border-radius: 3px;
+        padding: 5px 15px;
+      }
+      .add .date-input, .edit .date-input {
+        width: 160px;
+      }
+      .edit input, .edit div.editable,
+      .add input, .add div.editable {
+        margin: 10px 0;
+        background-color: #FFF;
+      }
+      .add .empty {
+        color: #AAA;
       }
     </style>
   </head>

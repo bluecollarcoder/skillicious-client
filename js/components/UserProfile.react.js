@@ -1,4 +1,5 @@
 var React = require("react");
+var Dispatcher = require("flux").Dispatcher;
 var Router = require('react-router');
 var _ = require('underscore');
 var ActionCreator = require('../actions/UserProfileActions.react');
@@ -8,6 +9,10 @@ var DefaultRoute = Router.DefaultRoute;
 var Navigation = Router.Navigation;
 var userProfileStore, userSessionStore;
 
+// Used for internal events
+var _dispatcher = new Dispatcher();
+
+// Component for displaying a profile
 var ProfileView = React.createClass({
   "render":function(){
     if (!this.props.profile)
@@ -110,26 +115,224 @@ var ProfileView = React.createClass({
   }
 });
 
-var ProfileEdit = React.createClass({
+// Component for displaying and editing a work history item
+var WorkHistoryPosition = React.createClass({
+  "getInitialState":function(){
+    return {
+      "mode":"view"
+    };
+  },
   "render":function(){
-    if (!this.props.profile)
+    var position = this.props.position;
+    if (this.state.mode == 'edit')
+      return <form className="work-position edit" onSubmit={this._onSave}>
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtEmployer" defaultValue={position.employer} required /></div>
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtTitle" defaultValue={position.title} required /></div>
+        </div>
+        <div className="position-duration"><input type="month" ref="txtStart" className="date-input" defaultValue={position.start} required /> -- <input type="month" ref="txtEnd" className="date-input" defaultValue={position.end} /></div>
+        <div contentEditable ref="txtDesc" className="position-description preformatted editable profile-edit-input">{position.desc}</div>
+        <div style={{"marginTop":"10px"}}>
+          <button className="btn btn-sm btn-success">Save Position</button>
+          <a className="btn-cancel" onClick={this._onCancel}>Cancel</a>
+        </div>
+      </form>;
+    else
+      return <div className="work-position">
+        <div className="btn-work-history fa fa-times" title="Remove" onClick={this._onRemove}></div>
+        <div className="btn-work-history fa fa-pencil" title="Edit" onClick={this._onEdit}></div>
+        <div className="position-employer">{position.employer}</div>
+        <div className="position-title">{position.title}</div>
+        <div className="position-duration">{position.start} -- {position.end ? position.end : 'Present'}</div>
+        <div className="position-description preformatted">{position.desc}</div>
+      </div>;
+  },
+  "_onEdit":function(){
+    this.setState({"mode":"edit"});
+  },
+  "_onRemove":function(e){
+    _dispatcher.dispatch({
+      "actionType":"remove-work-position",
+      "index":this.props.index
+    });
+  },
+  "_onSave":function(){
+    var position = {
+      "employer":this.refs.txtEmployer.getDOMNode().value,
+      "title":this.refs.txtTitle.getDOMNode().value,
+      "start":this.refs.txtStart.getDOMNode().value,
+      "end":this.refs.txtEnd.getDOMNode().value,
+      "desc":this.refs.txtDesc.getDOMNode().innerHTML
+    };
+    _dispatcher.dispatch({
+      "actionType":"update-work-position",
+      "index":this.props.index,
+      "position":position
+    });
+    this.setState({"mode":"view"});
+    return false;
+  },
+  "_onCancel":function(){
+    this.setState({"mode":"view"});
+  }
+});
+
+// Component for editing the work history section
+var WorkHistory = React.createClass({
+  "render":function(){
+    var self = this;
+    return <div className="work-history">
+      {_.map(this.props.history,function(position,index){
+        return <WorkHistoryPosition index={index} position={position} />;
+      })}
+      <form className="work-position add" onSubmit={this._onAdd}>
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtEmployer" placeholder="Company Name" required /></div>
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtTitle" placeholder="Job Title" required /></div>
+        </div>
+        <div className="position-duration"><input type="month" ref="txtStart" className="date-input" required /> -- <input type="month" ref="txtEnd" className="date-input" /></div>
+        <div contentEditable ref="txtDesc" className="position-description preformatted editable profile-edit-input empty" onFocus={this._onFocus} onBlur={this._onBlur}>Description</div>
+        <div style={{"marginTop":"10px"}}>
+          <button className="btn btn-sm btn-success">Add Position</button>
+          <a className="btn-cancel" onClick={this._onClear}>Clear</a>
+        </div>
+      </form>
+    </div>;
+  },
+  "_onFocus":function(e){
+    var editable = e.target;
+    var $editable = $(editable);
+    if ($editable.hasClass('empty')) {
+      $editable.removeClass('empty');
+      editable.innerHTML = '';
+    }
+  },
+  "_onBlur":function(e){
+    var editable = e.target;
+    var $editable = $(editable);
+    if (editable.innerHTML)
+      $editable.removeClass('empty');
+    else {
+      $editable.addClass('empty');
+      editable.innerHTML = 'Description';
+    }
+  },
+  "_onAdd":function(e){
+    var editable = this.refs.txtDesc.getDOMNode();
+    var $editable = $(editable);
+    var position = {
+      "employer":this.refs.txtEmployer.getDOMNode().value,
+      "title":this.refs.txtTitle.getDOMNode().value,
+      "start":this.refs.txtStart.getDOMNode().value,
+      "end":this.refs.txtEnd.getDOMNode().value,
+      "desc":$editable.hasClass('empty') ? null : editable.innerHTML
+    };
+    _dispatcher.dispatch({
+      "actionType":"add-work-position",
+      "position":position
+    });
+    this._onClear(e);
+    return false;
+  },
+  "_onClear":function(e){
+    this.refs.txtEmployer.getDOMNode().value = null;
+    this.refs.txtTitle.getDOMNode().value = null;
+    this.refs.txtStart.getDOMNode().value = null;
+    this.refs.txtEnd.getDOMNode().value = null;
+    var editable = this.refs.txtDesc.getDOMNode();
+    editable.innerHTML = 'Description';
+    $(editable).addClass('empty');
+  }
+});
+
+// Component for editing a profile
+var ProfileEdit = React.createClass({
+  "getInitialState":function(){
+    return {
+      "profile":_.extend({},this.props.profile), // Clone a new object so that we can easily rollback changes
+      "loaded":this.props.profile != null
+    };
+  },
+  "componentDidMount":function(){
+    var self = this;
+    // Register ProfileEdit with the dispatcher
+    _dispatcher.register(function(action){
+      var profile = _.extend({},self.state.profile);
+      switch (action.actionType) {
+        case "add-work-position":
+          profile.work.unshift(action.position);
+          break;
+        case "update-work-position":
+          profile.work[action.index] = action.position;
+          break;
+        case "remove-work-position":
+          profile.work = profile.work.filter(function(position,index){
+            return index != action.index;
+          });
+          break;
+      }
+      self.setState({"profile":profile});
+    });
+  },
+  "componentWillUpdate":function(newProp,newState){
+    // The profile is not passed in props if the page starts in the edit mode,
+    // only when the route changes. This is added to save the profile to the state
+    // when the route changes.
+    if (newProp.profile && !this.state.loaded)
+      this.setState({
+        "profile":newProp.profile,
+        "loaded":true
+      });
+  },
+  "render":function(){
+    if (!this.state.profile)
       return null;
 
-    var profile = this.props.profile;
+    var profile = this.state.profile;
     var completion = 0;
-    var summary, skills, work, edu;
 
     completion += (profile.summary) ? .25 : 0;
     completion += (profile.skills && !_.isEmpty(profile.skills)) ? .25 : 0;
     completion += (profile.work && profile.work.length) ? .25 : 0;
     completion += (profile.edu && profile.edu.length) ? .25 : 0;
 
-    summary =
+    var summary =
       <div className="profile-section profile-summary">
         <h3>Summary</h3>
         <div contentEditable ref="txtSummary" className="preformatted editable profile-edit-input">
           {profile.summary ? profile.summary : null}
         </div>
+      </div>;
+    var skills =
+      <div className="profile-section profile-skills">
+        <h3>Skills</h3>
+        <p>{
+          _.map(profile.skills||{},function(level,key){
+            var className = "tag ";
+            switch (level) {
+              case 1: className += "skill-working"; break;
+              case 2: className += "skill-advanced"; break;
+              case 3: className += "skill-expert"; break;
+            }
+            return <span className={className}>{key}</span>;
+          })
+        }</p>
+      </div>;
+    var work =
+      <div className="profile-section profile-work-history">
+        <h3>Work Experiences</h3>
+        <WorkHistory history={profile.work} />
+      </div>;
+    var edu =
+      <div className="profile-section profile-education">
+        <h3>Education</h3>
+        {_.map(profile.edu||[],function(edu){
+          return <div className="edu-degrees">
+            <div className="degree-school">{edu.school}</div>
+            <div className="degree-degree">{edu.degree}</div>
+            <div className="degree-year">{edu.year}</div>
+          </div>;
+        })}
       </div>;
 
     return (
@@ -154,8 +357,12 @@ var ProfileEdit = React.createClass({
           <div>
             <h2>{this.props.principal.name}</h2>
             {summary}
+            {skills}
+            {work}
+            {edu}
           </div>
-          <button className="btn btn-success" onClick={this._doSave}>Save</button>
+          <button className="btn btn-success" onClick={this._doSave}>Save Profile</button>
+          <a href="#" style={{margin:"20px"}}>Cancel</a>
         </div>
       </div>
     );
@@ -165,6 +372,7 @@ var ProfileEdit = React.createClass({
   }
 });
 
+// Top-level component that sets up the React routes
 var UserProfile = React.createClass({
   "mixins":[Navigation],
   "statics":{
@@ -194,7 +402,7 @@ var UserProfile = React.createClass({
     // Listen to "change" event on the UserProfileStore
     userProfileStore.on("change",function(opt){
       self.setState({
-        "profile":userProfileStore.profile ? userProfileStore.profile : {}
+        "profile":userProfileStore.profile ? userProfileStore.profile : null
       });
       if (_.isEmpty(self.state.profile))
         // If the user has an empty profile object, take her to the edit screen
