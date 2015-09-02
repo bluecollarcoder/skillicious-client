@@ -147,15 +147,18 @@ var WorkHistoryPosition = React.createClass({
         <div className="position-description preformatted">{position.desc}</div>
       </div>;
   },
+  // Called when the edit button is clicked. Switches the component to edit mode.
   "_onEdit":function(){
     this.setState({"mode":"edit"});
   },
+  // Called when the remove button is clicked. Triggers action to remove this position.
   "_onRemove":function(e){
     _dispatcher.dispatch({
       "actionType":"remove-work-position",
       "index":this.props.index
     });
   },
+  // Called when the save button is clicked. Triggers action to update this position.
   "_onSave":function(){
     var position = {
       "employer":this.refs.txtEmployer.getDOMNode().value,
@@ -172,6 +175,7 @@ var WorkHistoryPosition = React.createClass({
     this.setState({"mode":"view"});
     return false;
   },
+  // Called when the cancel button is clicked. Reverts this component back to view mode.
   "_onCancel":function(){
     this.setState({"mode":"view"});
   }
@@ -199,6 +203,7 @@ var WorkHistory = React.createClass({
       </form>
     </div>;
   },
+  // Called when the description box has focus
   "_onFocus":function(e){
     var editable = e.target;
     var $editable = $(editable);
@@ -207,6 +212,7 @@ var WorkHistory = React.createClass({
       editable.innerHTML = '';
     }
   },
+  // Called whene the description box loses focus
   "_onBlur":function(e){
     var editable = e.target;
     var $editable = $(editable);
@@ -217,6 +223,7 @@ var WorkHistory = React.createClass({
       editable.innerHTML = 'Description';
     }
   },
+  // Called when the "add" button is clicked
   "_onAdd":function(e){
     var editable = this.refs.txtDesc.getDOMNode();
     var $editable = $(editable);
@@ -234,6 +241,7 @@ var WorkHistory = React.createClass({
     this._onClear(e);
     return false;
   },
+  // Called when the "cancel" button is clicked
   "_onClear":function(e){
     this.refs.txtEmployer.getDOMNode().value = null;
     this.refs.txtTitle.getDOMNode().value = null;
@@ -242,6 +250,111 @@ var WorkHistory = React.createClass({
     var editable = this.refs.txtDesc.getDOMNode();
     editable.innerHTML = 'Description';
     $(editable).addClass('empty');
+  }
+});
+
+// Component for displaying and editing an education history item
+var EduHistoryDegree = React.createClass({
+  "getInitialState":function(){
+    return {
+      "mode":"view"
+    };
+  },
+  "render":function(){
+    var degree = this.props.degree;
+    if (this.state.mode == 'edit')
+      return <form className="edu-degree edit" onSubmit={this._onSave}>
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtSchool" defaultValue={degree.school} required /></div>
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtDegree" defaultValue={degree.degree} required /></div>
+        </div>
+        <div className="position-duration"><input type="text" ref="txtGradYear" className="date-input" defaultValue={degree.year} required pattern="\d{4}" /></div>
+        <div style={{"marginTop":"10px"}}>
+          <button className="btn btn-sm btn-success">Save Degree</button>
+          <a className="btn-cancel" onClick={this._onCancel}>Cancel</a>
+        </div>
+      </form>;
+    else
+      return <div className="edu-degree">
+        <div className="btn-work-history fa fa-times" title="Remove" onClick={this._onRemove}></div>
+        <div className="btn-work-history fa fa-pencil" title="Edit" onClick={this._onEdit}></div>
+        <div className="degree-school">{degree.school}</div>
+        <div className="degree-degree">{degree.degree}</div>
+        <div className="degree-year">{degree.year}</div>
+      </div>;
+  },
+  // Called when the edit button is clicked. Switches the component to edit mode.
+  "_onEdit":function(){
+    this.setState({"mode":"edit"});
+  },
+  // Called when the remove button is clicked. Triggers action to remove this degree.
+  "_onRemove":function(e){
+    _dispatcher.dispatch({
+      "actionType":"remove-edu-degree",
+      "index":this.props.index
+    });
+  },
+  // Called when the save button is clicked. Triggers action to update this degree.
+  "_onSave":function(){
+    var degree = {
+      "school":this.refs.txtSchool.getDOMNode().value,
+      "degree":this.refs.txtDegree.getDOMNode().value,
+      "year":this.refs.txtGradYear.getDOMNode().value
+    };
+    _dispatcher.dispatch({
+      "actionType":"update-edu-degree",
+      "index":this.props.index,
+      "degree":degree
+    });
+    this.setState({"mode":"view"});
+    return false;
+  },
+  // Called when the cancel button is clicked. Reverts this component back to view mode.
+  "_onCancel":function(){
+    this.setState({"mode":"view"});
+  }
+});
+
+// Component for editing the education history section
+var EduHistory = React.createClass({
+  "render":function(){
+    var self = this;
+    return <div className="edu-history">
+      {_.map(this.props.history,function(degree,index){
+        return <EduHistoryDegree degree={degree} index={index} />;
+      })}
+      <form className="edu-degree add" onSubmit={this._onAdd}>
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtSchool" placeholder="Institution" required /></div>
+          <div className="col-lg-6 col-md-6 col-sm-6"><input type="text" ref="txtDegree" placeholder="Degree" required /></div>
+        </div>
+        <div className="edu-year"><input type="text" ref="txtGradYear" className="date-input" placeholder="Graduation Year" required pattern="\d{4}" /></div>
+        <div style={{"marginTop":"10px"}}>
+          <button className="btn btn-sm btn-success">Add Education</button>
+          <a className="btn-cancel" onClick={this._onClear}>Clear</a>
+        </div>
+      </form>
+    </div>;
+  },
+  // Called when the "add" button is clicked
+  "_onAdd":function(e){
+    var degree = {
+      "school":this.refs.txtSchool.getDOMNode().value,
+      "degree":this.refs.txtDegree.getDOMNode().value,
+      "year":this.refs.txtGradYear.getDOMNode().value
+    };
+    _dispatcher.dispatch({
+      "actionType":"add-edu-degree",
+      "degree":degree
+    });
+    this._onClear(e);
+    return false;
+  },
+  // Called when the "cancel" button is clicked
+  "_onClear":function(e){
+    this.refs.txtSchool.getDOMNode().value = null;
+    this.refs.txtDegree.getDOMNode().value = null;
+    this.refs.txtGradYear.getDOMNode().value = null;
   }
 });
 
@@ -260,15 +373,31 @@ var ProfileEdit = React.createClass({
       var profile = _.extend({},self.state.profile);
       switch (action.actionType) {
         case "add-work-position":
+          if (!profile.work) profile.work = [];
           profile.work.unshift(action.position);
           break;
         case "update-work-position":
-          profile.work[action.index] = action.position;
+          if (profile.work)
+            profile.work[action.index] = action.position;
           break;
         case "remove-work-position":
-          profile.work = profile.work.filter(function(position,index){
-            return index != action.index;
-          });
+          if (profile.work)
+            profile.work = profile.work.filter(function(position,index){
+              return index != action.index;
+            });
+        case "add-edu-degree":
+          if (!profile.edu) profile.edu = [];
+            profile.edu.unshift(action.degree);
+          break;
+        case "update-edu-degree":
+          if (profile.edu)
+            profile.edu[action.index] = action.degree;
+          break;
+        case "remove-edu-degree":
+          if (profile.edu)
+            profile.edu = profile.edu.filter(function(position,index){
+              return index != action.index;
+            });
           break;
       }
       self.setState({"profile":profile});
@@ -326,13 +455,7 @@ var ProfileEdit = React.createClass({
     var edu =
       <div className="profile-section profile-education">
         <h3>Education</h3>
-        {_.map(profile.edu||[],function(edu){
-          return <div className="edu-degrees">
-            <div className="degree-school">{edu.school}</div>
-            <div className="degree-degree">{edu.degree}</div>
-            <div className="degree-year">{edu.year}</div>
-          </div>;
-        })}
+        <EduHistory history={profile.edu} />
       </div>;
 
     return (
