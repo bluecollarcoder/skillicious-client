@@ -115,6 +115,124 @@ var ProfileView = React.createClass({
   }
 });
 
+// Component for displaying and editing a skill tag
+var SkillTag = React.createClass({
+  "getInitialState":function(){
+    return {
+      "mode":"view"
+    };
+  },
+  "render":function(){
+    if (this.state.mode == 'edit')
+      return <div className="skill row">
+        <form onSubmit={this._onSave}>
+          <div className="col-lg-4 col-md-4 col-sm-4">
+            <input type="text" ref="txtSkill" placeholder="Skill" defaultValue={this.props.skill} required />
+          </div>
+          <div className="col-lg-2 col-md-2 col-sm-2">
+            <select ref="selLevel" required>
+              <option value="1" selected={this.props.level == 1 ? true : false}>Working</option>
+              <option value="2" selected={this.props.level == 2 ? true : false}>Advanced</option>
+              <option value="3" selected={this.props.level == 3 ? true : false}>Expert</option>
+            </select>
+          </div>
+          <div className="col-lg-6 col-md-6 col-sm-6">
+            <button className="btn btn-success">Save</button>
+            <a className="btn-cancel" onClick={this._onCancel}>Cancel</a>
+          </div>
+        </form>
+      </div>;
+    else {
+      var level;
+      switch (this.props.level) {
+        case 1: level = "Working"; break;
+        case 2: level = "Advanced"; break;
+        case 3: level = "Expert"; break;
+        default: return null;
+      }
+      return <div className="skill row">
+        <div className="col-lg-4 col-md-4 col-sm-4">{this.props.skill}</div>
+        <div className="col-lg-8 col-md-8 col-sm-8">
+          <span>{level}</span>
+          <div className="btn-work-history fa fa-times" title="Remove" onClick={this._onRemove}></div>
+          <div className="btn-work-history fa fa-pencil" title="Edit" onClick={this._onEdit}></div>
+        </div>
+      </div>;
+    }
+  },
+  // Called when the edit button is clicked. Switches the component to edit mode.
+  "_onEdit":function(){
+    this.setState({"mode":"edit"});
+  },
+  // Called when the remove button is clicked. Triggers action to remove this skill.
+  "_onRemove":function(e){
+    _dispatcher.dispatch({
+      "actionType":"remove-skill",
+      "tag":this.props.skill
+    });
+  },
+  // Called when the save button is clicked. Triggers action to update this skill.
+  "_onSave":function(){
+    _dispatcher.dispatch({
+      "actionType":"update-skill",
+      "oldTag":this.props.skill,
+      "newTag":this.refs.txtSkill.getDOMNode().value,
+      "level":parseInt($(this.refs.selLevel.getDOMNode()).val())
+    });
+    this.setState({"mode":"view"});
+    return false;
+  },
+  // Called when the cancel button is clicked. Reverts this component back to view mode.
+  "_onCancel":function(){
+    this.setState({"mode":"view"});
+  }
+});
+
+// Component for editing the skills section
+var SkillTags = React.createClass({
+  "render":function(){
+    var self = this, index = 0;
+    return <div className="skill-tags">
+      {_.map(this.props.skills,function(level,skill){
+        return <SkillTag skill={skill} level={level} index={index++} />;
+      })}
+      <form className="skill add" onSubmit={this._onAdd}>
+        <div className="row">
+          <div className="col-lg-4 col-md-4 col-sm-4">
+            <input type="text" ref="txtSkill" placeholder="Skill" required />
+          </div>
+          <div className="col-lg-5 col-md-5 col-sm-5">
+            <select ref="selLevel" required>
+              <option value="1">Working</option>
+              <option value="2">Advanced</option>
+              <option value="3">Expert</option>
+            </select>
+          </div>
+          <div className="col-lg-3 col-md-3 col-sm-3">
+            <button className="btn btn-sm btn-success">Add Skill</button>
+            <a className="btn-cancel" onClick={this._onClear}>Clear</a>
+          </div>
+        </div>
+      </form>
+    </div>;
+  },
+  // Called when the "add" button is clicked
+  "_onAdd":function(e){
+    _dispatcher.dispatch({
+      "actionType":"add-skill",
+      "tag":this.refs.txtSkill.getDOMNode().value,
+      "level":parseInt($(this.refs.selLevel.getDOMNode()).val())
+    });
+    this._onClear(e);
+    return false;
+  },
+  // Called when the "cancel" button is clicked
+  "_onClear":function(e){
+    this.refs.txtSkill.getDOMNode().value = null;
+    $(this.refs.selLevel.getDOMNode()).val(1);
+  }
+});
+
 // Component for displaying and editing a work history item
 var WorkHistoryPosition = React.createClass({
   "getInitialState":function(){
@@ -372,6 +490,20 @@ var ProfileEdit = React.createClass({
     _dispatcher.register(function(action){
       var profile = _.extend({},self.state.profile);
       switch (action.actionType) {
+        case "add-skill":
+          if (profile.skills)
+            profile.skills[action.tag] = action.level;
+          break;
+        case "update-skill":
+          if (profile.skills) {
+            delete profile.skills[action.oldTag];
+            profile.skills[action.newTag] = action.level;
+          }
+          break;
+        case "remove-skill":
+          if (profile.skills)
+            delete profile.skills[action.tag];
+          break;
         case "add-work-position":
           if (!profile.work) profile.work = [];
           profile.work.unshift(action.position);
@@ -435,17 +567,7 @@ var ProfileEdit = React.createClass({
     var skills =
       <div className="profile-section profile-skills">
         <h3>Skills</h3>
-        <p>{
-          _.map(profile.skills||{},function(level,key){
-            var className = "tag ";
-            switch (level) {
-              case 1: className += "skill-working"; break;
-              case 2: className += "skill-advanced"; break;
-              case 3: className += "skill-expert"; break;
-            }
-            return <span className={className}>{key}</span>;
-          })
-        }</p>
+        <SkillTags skills={profile.skills} />
       </div>;
     var work =
       <div className="profile-section profile-work-history">

@@ -44,6 +44,18 @@
         margin-top: 40px;
         margin-bottom: 10px;
       }
+      .skill:first-child {
+        margin-top: 40px;
+        margin-bottom: 5px;
+      }
+      .skill {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .skill select {
+        height: 32px;
+        padding: 5px;
+      }
       .position-employer, .degree-school {
         font-size: 1.1em;
         font-weight: 600;
@@ -92,7 +104,7 @@
         margin: 5px;
       }
       .btn-cancel {
-        padding: 20px;
+        padding: 0 20px;
         cursor: pointer;
         display: inline-block;
       }
@@ -105,9 +117,11 @@
       .add .date-input, .edit .date-input {
         width: 160px;
       }
-      .edit input, .edit div.editable,
-      .add input, .add div.editable {
+      .edit input, .edit div.editable, .edit select, .edit button, .edit a,
+      .add input, .add div.editable, .add select, .add button, .add a {
         margin: 10px 0;
+      }
+      div.editable {
         background-color: #FFF;
       }
       .add .empty {
