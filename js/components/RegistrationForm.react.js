@@ -85,6 +85,7 @@ var CompanyRegistrationForm = React.createClass({
     var password = this.refs.inputPassword.getDOMNode().value;
     if (!company || !location || !name || !email || !password)
       return;
+    alert("Sorry, this functionality has not been implemented yet.");
     ActionCreator.registerEmployer(company,location,name,email,password);
   }
 });

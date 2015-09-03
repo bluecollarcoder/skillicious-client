@@ -20,8 +20,10 @@ module.exports = {
         dispatcher.dispatch(action);
         resolve(result);
       }).catch(function(error){
-        var action = _.extend({"actionType":"signin_failure"},error);
-        dispatcher.dispatch(action);
+        dispatcher.dispatch({
+          "actionType":"signin_failure",
+          "error":error
+        });
         reject(error);
       });
     });
@@ -47,8 +49,10 @@ module.exports = {
         dispatcher.dispatch(action);
         resolve(result);
       }).catch(function(error){
-        var action = _.extend({"actionType":"registration_failure"},error);
-        dispatcher.dispatch(action);
+        dispatcher.dispatch({
+          "actionType":"registration_failure",
+          "error":error
+        });
         reject(error);
       });
     });
@@ -62,8 +66,10 @@ module.exports = {
         dispatcher.dispatch(action);
         resolve(result);
       }).catch(function(error){
-        var action = _.extend({"actionType":"registration_failure"},error);
-        dispatcher.dispatch(action);
+        dispatcher.dispatch({
+          "actionType":"registration_failure",
+          "error":error
+        });
         reject(error);
       });
     });

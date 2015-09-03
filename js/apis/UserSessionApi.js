@@ -32,7 +32,7 @@ module.exports = {
           resolve(results);
         },
         "error":function(jqXHR,status,error){
-          reject(new Error(error));
+          reject(jqXHR.responseJSON);
         }
       });
     });
@@ -68,7 +68,7 @@ module.exports = {
           resolve(results);
         },
         "error":function(jqXHR,status,error){
-          reject(new Error(error));
+          reject(jqXHR.responseJSON);
         }
       });
     });

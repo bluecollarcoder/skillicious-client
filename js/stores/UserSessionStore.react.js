@@ -37,7 +37,7 @@ function UserSessionStore(){
           break;
         case 'signin_failure':
           EventEmitter.prototype.emit.call(this,"signin_failure");
-          alert("Sign In Failed");
+          alert(action.error.message);
           break;
         case 'signout_success':
         case 'expire':
@@ -64,6 +64,7 @@ function UserSessionStore(){
           }
           break;
         case 'registration_failure':
+          alert(action.error.message);
           break;
         // Unrecognized action; ignore
       }
