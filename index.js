@@ -41,6 +41,9 @@ window.skillicious.redirectToSignin = function(){
     window.location.assign("/");
   },200);
 };
+window.skillicious.redirectToProfile = function(){
+  window.location.assign("/profile");
+};
 
 /*
  * Page-specific initialization functions
@@ -49,7 +52,11 @@ window.skillicious.redirectToSignin = function(){
 // Registration page
 window.skillicious.initializeRegistrationForm = function(domElement){
   var RegistrationForm = require('./js/components/RegistrationForm.react');
-  React.render(<RegistrationForm />, domElement);
+  // If the user is already authenticated, redirect to the profile page.
+  if (userSessionStore.principal)
+    window.skillicious.redirectToProfile();
+  else
+    React.render(<RegistrationForm />, domElement);
 };
 
 // User profile page

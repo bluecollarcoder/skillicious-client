@@ -86,6 +86,7 @@ var CompanyRegistrationForm = React.createClass({
     if (!company || !location || !name || !email || !password)
       return;
     alert("Sorry, this functionality has not been implemented yet.");
+    return;
     ActionCreator.registerEmployer(company,location,name,email,password);
   }
 });
