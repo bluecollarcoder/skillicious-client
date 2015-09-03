@@ -490,9 +490,12 @@ var ProfileEdit = React.createClass({
     _dispatcher.register(function(action){
       var profile = _.extend({},self.state.profile);
       switch (action.actionType) {
+        case "update-summary":
+          profile.summary = action.summary;
+          break;
         case "add-skill":
-          if (profile.skills)
-            profile.skills[action.tag] = action.level;
+          profile.skills = profile.skills || {};
+          profile.skills[action.tag] = action.level;
           break;
         case "update-skill":
           if (profile.skills) {
@@ -505,8 +508,8 @@ var ProfileEdit = React.createClass({
             delete profile.skills[action.tag];
           break;
         case "add-work-position":
-          if (!profile.work) profile.work = [];
-          profile.work.unshift(action.position);
+          profile.work = profile.work || [];
+          profile.work.push(action.position);
           break;
         case "update-work-position":
           if (profile.work)
@@ -518,8 +521,8 @@ var ProfileEdit = React.createClass({
               return index != action.index;
             });
         case "add-edu-degree":
-          if (!profile.edu) profile.edu = [];
-            profile.edu.unshift(action.degree);
+          profile.edu = profile.edu || [];
+          profile.edu.push(action.degree);
           break;
         case "update-edu-degree":
           if (profile.edu)
@@ -560,7 +563,7 @@ var ProfileEdit = React.createClass({
     var summary =
       <div className="profile-section profile-summary">
         <h3>Summary</h3>
-        <div contentEditable ref="txtSummary" className="preformatted editable profile-edit-input">
+        <div contentEditable ref="txtSummary" className="preformatted editable profile-edit-input" onBlur={this._doUpdateSummary}>
           {profile.summary ? profile.summary : null}
         </div>
       </div>;
@@ -613,7 +616,15 @@ var ProfileEdit = React.createClass({
     );
   },
   "_doSave":function(e){
-    ActionCreator.updateProfile(this.props.profile);
+    ActionCreator.updateProfile(this.state.profile);
+  },
+  "_doUpdateSummary":function(e){
+    var summary = e.target.innerHTML;
+    if (summary)
+      _dispatcher.dispatch({
+        "actionType":"update-summary",
+        "summary":summary
+      });
   }
 });
 

@@ -81,11 +81,20 @@ module.exports = {
     });
   },
   "updateProfile":function(profile){
+    var self = this;
     return new RSVP.Promise(function(resolve,reject){
-      window.setTimeout(function(){
-        var results = returnVal;
-        resolve(results);
-      },500);
+      self.ajax(API_ROOT+'/profiles',{
+        "type":"PUT",
+        "contentType":"application/json",
+        "processData":false,
+        "data":JSON.stringify(profile),
+        "success":function(profile){
+          resolve(profile);
+        },
+        "error":function(jqXHR,status,error){
+          reject(new Error(error));
+        }
+      });
     });
   }
 };
