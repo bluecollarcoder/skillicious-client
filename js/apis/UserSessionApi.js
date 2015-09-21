@@ -1,10 +1,12 @@
 var RSVP = require('rsvp');
+var _ = require('underscore');
+var mixin = require('./mixin');
 
 var sessionStore;
 var API_ROOT = '/api';
 var temp = 0;
 
-module.exports = {
+var UserSessionApi = {
   "setUp":function(_sessionStore,_root){
     sessionStore = _sessionStore;
     API_ROOT = _root ? _root : API_ROOT;
@@ -18,8 +20,9 @@ module.exports = {
    *  successful.
    */
   "signIn":function(email,password){
+    var self = this;
     return new RSVP.Promise(function(resolve,reject){
-      $.ajax(API_ROOT+'/auth',{
+      self.ajax(API_ROOT+'/auth',{
         "type":"GET",
         "headers":{
           "Authorization":"Basic " + new Buffer(email + ':' + password).toString('base64')
@@ -32,7 +35,7 @@ module.exports = {
           resolve(results);
         },
         "error":function(jqXHR,status,error){
-          reject(jqXHR.responseJSON);
+          reject(error);
         }
       });
     });
@@ -49,8 +52,9 @@ module.exports = {
     });
   },
   "registerUser":function(name,email,password){
+    var self = this;
     return new RSVP.Promise(function(resolve,reject){
-      $.ajax(API_ROOT+'/auth',{
+      self.ajax(API_ROOT+'/auth',{
         "type":"POST",
         "contentType":"application/json",
         "processData":false,
@@ -68,29 +72,41 @@ module.exports = {
           resolve(results);
         },
         "error":function(jqXHR,status,error){
-          reject(jqXHR.responseJSON);
+          reject(error);
         }
       });
     });
   },
   "registerEmployer":function(company,location,name,email,password){
+    var self = this;
     return new RSVP.Promise(function(resolve,reject){
-      window.setTimeout(function(){
-        var results = {
-          "principal":{
-            "id":2,
-            "email":"wayne@skillicio.us",
-            "name":"Wayne Chan",
-            "role":"recruiter",
-            "company":{
-              "name":"Skillicious",
-              "location":"New York, NY"
-            }
-          },
-          "token":"ABCDEFGHI"
-        };
-        resolve(results);
-      },2000);
+      self.ajax(API_ROOT+'/auth',{
+        "type":"POST",
+        "contentType":"application/json",
+        "processData":false,
+        "data":JSON.stringify({
+          "name":name,
+          "email":email,
+          "password":password,
+          "role":"employer",
+          "company":{
+            "name":company,
+            "location":location
+          }
+        }),
+        "success":function(principal,status,jqXHR){
+          var results = {
+            "principal":principal,
+            "token":jqXHR.getResponseHeader('X-Jwt-Token')
+          };
+          resolve(results);
+        },
+        "error":function(jqXHR,status,error){
+          reject(error);
+        }
+      });
     });
   }
 };
+
+module.exports = _.extend({},UserSessionApi,mixin);

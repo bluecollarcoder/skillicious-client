@@ -55,7 +55,7 @@ var CompanyRegistrationForm = React.createClass({
           </div>
           <div className="row">
             <div className="col-sm-4"><label htmlFor="inputLocation">Location</label></div>
-            <div className="col-sm-8"><input ref="inputLocation" type="text" id="inputLocation" className="form-control" placeholder="City, State" required pattern="\w+,\s*\w+" /></div>
+            <div className="col-sm-8"><input ref="inputLocation" type="text" id="inputLocation" className="form-control" placeholder="City, State" required pattern="[\w\s]+,\s*\w+" /></div>
           </div>
           <div className="row">
             <div className="col-sm-4"><label htmlFor="inputName">Your Name</label></div>
@@ -85,8 +85,6 @@ var CompanyRegistrationForm = React.createClass({
     var password = this.refs.inputPassword.getDOMNode().value;
     if (!company || !location || !name || !email || !password)
       return;
-    alert("Sorry, this functionality has not been implemented yet.");
-    return;
     ActionCreator.registerEmployer(company,location,name,email,password);
   }
 });

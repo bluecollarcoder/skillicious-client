@@ -58,7 +58,7 @@ function UserSessionStore(){
                 window.location.href = "/profile";
                 break;
               case "recruiter":
-                window.location.href = "/profile";
+                window.location.href = "/dashboard";
                 break;
             }
           }
